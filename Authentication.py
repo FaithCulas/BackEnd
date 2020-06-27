@@ -27,5 +27,5 @@ def authNetwork(arr):
     #using features send into trained network
     #checking distance make prediction
     #output user name or 'unknown'
-    prediction = 'Rozi'
+    prediction = 'Hey Rozan'
     return prediction
