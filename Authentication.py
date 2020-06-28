@@ -1,4 +1,7 @@
 import numpy as np
+import random
+from flask import json
+from app import users
 
 def Authentication():
     #getting preprocessed data
@@ -13,7 +16,8 @@ def Authentication():
 	if presence == 1:
 	    user = authNetwork(CSI)
 	    #send user to front end
-	return user
+        
+	return users
 
 def getSVM(arr):
     #using CSI values get features
@@ -27,5 +31,5 @@ def authNetwork(arr):
     #using features send into trained network
     #checking distance make prediction
     #output user name or 'unknown'
-    prediction = 'Hey Rozan'
+    prediction = "rozan"
     return prediction
