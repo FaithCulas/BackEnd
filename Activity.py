@@ -5,10 +5,10 @@ def Activity():
     activity=activities[1]
     return activity """
     #WORDS = []
-    """ with open("A:\\GIT\\Backend\\env1\\test2.csv", "r") as file:
+    """ with open("test2.csv", "r") as file:
         for line in file.readlines():
             WORDS.append(line.rstrip()) """
-    WORDS=pd.read_csv("A:\\GIT\\Backend\\env1\\test2.csv")
+    WORDS=pd.read_csv("test2.csv")
     values=WORDS.iloc[-1,:].values
     activity=values[-1]
     return activity

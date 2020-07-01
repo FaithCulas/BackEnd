@@ -1,11 +1,11 @@
 import numpy as np
 import random
 from flask import json
+import pandas as pd
 
-
-def Authentication(CSI):
+def Authentication():
     #getting preprocessed data
-    #CSI = np.ndarray(10, dtype=np.complex128) 
+    CSI = np.ndarray(10, dtype=np.complex128) 
     amp = np.real(CSI)
     ph = np.imag(CSI)
 
@@ -16,8 +16,12 @@ def Authentication(CSI):
     if presence == 1:
         embed = getEmbeddings(CSI)
         user = predictUser(embed)
-        #send user to front end        
-    return user
+        #send user to front end     
+
+    WORDS=pd.read_csv("users.csv")
+    values=WORDS.iloc[-1,:].values
+    CSI=values[-1]   
+    return CSI
 
 def getSVM(arr):
     #using CSI values get features
@@ -35,12 +39,15 @@ def getEmbeddings(arr):
 def predictUser(arr):
     #checking distance make prediction
     #output user name or 'unknown'
-    prediction = "roz"
+    prediction = 'unknown'
     return prediction
 
-def addUser(name, CSI):
+def addUser(name):
+    WORDS=pd.read_csv("users.csv")
+    values=WORDS.iloc[-1,:].values
+    CSI=values[-1] 
     presence = getSVM(CSI)
     if presence == 1:
 	    embed = getEmbeddings(CSI)
     #add this embed value to the list of embeddings
-    return embed
+    return CSI
