@@ -2,25 +2,39 @@
 from flask import Flask,jsonify,request, json
 from flask_restful import Resource,Api
 from flask import Blueprint
+from flask_cors import CORS
 from Activity import Activity
 app=Flask(__name__)
+
+# Cross-Origin Resource Sharing <- allows react to access the API
+CORS(app)
+cors=CORS(app,resources={
+    r"/*":{
+        "origins":"localhost"
+    }
+})
+
 api=Api(app)
  
-
 data = open("test.txt", "r")
 content = data.read()
 users = content.splitlines() #have to change it to CSI data
 data.close()
 
 class Index(Resource):
-    def get (self):
+    def get(self):
         activity=Activity()
         from Authentication import Authentication
         authentication=Authentication(users)
         print(activity)
         return ({"activity":str(activity),"user":str(authentication),"location":"home"})
 
-
+    def noob(self):
+        activity=Activity()
+        from Authentication import Authentication
+        authentication=Authentication(users)
+        print(activity)
+        return ({"activity":str(activity),"user":str(authentication),"location":"home"})
 
     def post(self):
         from Authentication import addUser
