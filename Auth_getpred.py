@@ -35,19 +35,18 @@ def Authentication(CSI, dicti):
 
     #authentication
     if presence == 1:
-      #feature = getFeatures(CSI,30,2)
-      feature = CSI
-      #embeds = getEmbeddings([feature[0,:,:,:],feature[1,:,:,:],feature[2,:,:,:]])
-      res = getEval(x_test, y_test,seq_network_trained,dictionary)
+      feature = getFeatures(CSI,30,150)
+      embeds = getEmbeddings([feature[0],feature[1],feature[2]])
       #print(res)
       #print(res.count(0),res.count(1),res.count(2),res.count(3))
-      #user = most_frequent(res)
+      res = getEval(embeds,dictionary)
+      user = most_frequent(res)
 
     # WORDS=pd.read_csv("users.csv")
     # values=WORDS.iloc[-1,:].values
     # CSI=values[-1]   
     #CSI = predictModel()[1]
-    return res#user
+    return user
 
 def getSVM(arr):
     #using CSI values get features
@@ -145,22 +144,8 @@ def most_frequent(List):
     occurence_count = Counter(List) 
     return occurence_count.most_common(1)[0][0] 
 
-# def getEval(predictions,dicts):
-#   result = []
-#   for i in range(0,len(predictions)):
-#     means = []
-#     for j in range(0,len(dicts.keys())):
-#       means.append(np.mean([np.linalg.norm(predictions[i]-sample) for sample in dicts[j]]))
-#     #idx = [i for i, j in enumerate(means) if j == min(means)] 
-#     means=np.asarray(means)
-#     idx=np.where(means==np.amin(means))
-#     result.append(idx[0][0])
-#   return result
-
-def getEval(x_test, y_test,seq_network_trained,dicts):
-  predictions=seq_network_trained.predict([x_test[0,:,:,:],x_test[1,:,:,:],x_test[2,:,:,:]])
+def getEval(predictions,dicts):
   result = []
-  Y = y_test #creating y with class index
   for i in range(0,len(predictions)):
     means = []
     for j in range(0,len(dicts.keys())):
@@ -168,9 +153,7 @@ def getEval(x_test, y_test,seq_network_trained,dicts):
     #idx = [i for i, j in enumerate(means) if j == min(means)] 
     means=np.asarray(means)
     idx=np.where(means==np.amin(means))
-    # print("predicted: ",idx[0][0])
-    # print("actual:", Y[i])
-    result.append(idx[0][0]==Y[i])
+    result.append(idx[0][0])
   return result
 
 # def addUser(name):
@@ -187,35 +170,20 @@ def getEval(x_test, y_test,seq_network_trained,dicts):
 with open('authstuff/createDict/dict.p', 'rb') as fp:
       dictionary = pickle.load(fp)
 
-siamese_path='authstuff/model-01_corrected_small_1Dconv_98Acc_SEQ.h5'
-seq_network_trained=models.load_model(siamese_path,custom_objects={'identity_loss':identity_loss})
-
-
 #getting maxx,minn,diff data
 maxx = np.load('authstuff/maxes.npy')
 minn = np.load('authstuff/mins.npy')
 diff = np.load('authstuff/diff.npy')
 
+acc=[]
+for i in range(1,5):
+  for j in range(12):
+    dat = np.load('authstuff/preprocessed_user'+str(i)+'/preprocessed_loc_'+str(j)+".npy")
+    id = Authentication(dat,dictionary)
+    acc.append(id==i-1)
+    with open("predicted_user.csv","a") as fo:
+      fo.write(str(id))
+      fo.write("\n")
+    print(id,i-1)
 
-
-# for i in range(1,5):
-#   for j in range(12):
-#     dat = np.load('authstuff/preprocessed_user'+str(i)+'/preprocessed_loc_'+str(j)+".npy")
-#     id = Authentication(dat,dictionary)
-#     with open("predicted_user.csv","a") as fo:
-#       fo.write(str(id))
-#       fo.write("\n")
-#     print(id,i-1)
-
-data = reshapeData(np.load('authstuff/createDict/xauth_test.npy'))
-ans = reshapeData(np.load('authstuff/createDict/yauth_test.npy'))
-res = getEval(data, ans,seq_network_trained,dictionary)
-
-
-
-#id = Authentication(data,dictionary)
-#print(id)
-#print(ans)
-print(sum(res))
-print(len(ans))
-print("Accuracy: ",sum(res)/len(ans))
+print("Accuracy: ",sum(acc)/len(acc))
