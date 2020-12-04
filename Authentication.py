@@ -35,7 +35,7 @@ def getEmbeddings(arr):
 def predictUser(arr):
     #checking distance make prediction
     #output user name or 'unknown'
-    prediction = "roz"
+    prediction = "Lahiru"
     return prediction
 
 def addUser(name, CSI):

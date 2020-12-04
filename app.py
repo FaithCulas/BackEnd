@@ -5,6 +5,7 @@ from flask import Blueprint
 from flask_cors import CORS
 from Activity import Activity
 import numpy as np
+import pandas as pd
 
 app=Flask(__name__)
 
@@ -31,11 +32,8 @@ userDataFile='/home/lahiru/Documents/Git/Data/userData.npy'
 
 class Index(Resource):
     def get(self):
-        activity=Activity()
-        from Authentication import Authentication
-        authentication=Authentication(users)
-        print(activity)
-        return ({"activity":str(activity),"user":str(authentication),"location":"home"})
+        current_state = pd.read_csv('/home/lahiru/Documents/Git/BackEnd/test2.csv')
+        return ({"activity":str(current_state['Activity'][0]),"user":str(current_state['User'][0]),"location":str(current_state['Location'][0])})
 
     def post(self):
         from Authentication import addUser
